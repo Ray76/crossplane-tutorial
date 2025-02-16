@@ -1,0 +1,48 @@
+---
+apiVersion: azure.upbound.io/v1beta1
+kind: ResourceGroup
+metadata:
+  name: dot-group
+spec:
+  forProvider:
+    location: eastus
+---
+apiVersion: network.azure.upbound.io/v1beta1
+kind: NetworkInterface
+metadata:
+  name: dot-interface
+spec:
+  forProvider:
+    ipConfiguration:
+      - name: my-vm
+        privateIpAddressAllocation: Dynamic
+        subnetIdRef:
+          name: dot-subnet
+    location: eastus
+    resourceGroupNameRef:
+      name: dot-group
+---
+apiVersion: network.azure.upbound.io/v1beta1
+kind: Subnet
+metadata:
+  name: dot-subnet
+spec:
+  forProvider:
+    addressPrefixes:
+      - 10.0.1.0/24
+    resourceGroupNameRef:
+      name: dot-group
+    virtualNetworkNameRef:
+      name: dot-network
+---
+apiVersion: network.azure.upbound.io/v1beta1
+kind: VirtualNetwork
+metadata:
+  name: dot-network
+spec:
+  forProvider:
+    addressSpace:
+      - 10.0.0.0/16
+    location: eastus
+    resourceGroupNameRef:
+      name: dot-group
